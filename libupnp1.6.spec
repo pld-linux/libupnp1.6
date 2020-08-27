@@ -1,17 +1,16 @@
 Summary:	The Universal Plug and Play (UPnP) SDK for Linux
 Summary(pl.UTF-8):	Pakiet programistyczny Universal Plug and Play (UPnP) dla Linuksa
-Name:		libupnp
-Version:	1.14.0
-Release:	0.1
+Name:		libupnp1.6
+Version:	1.6.25
+Release:	1
 License:	BSD
 Group:		Libraries
-Source0:	http://downloads.sourceforge.net/pupnp/%{name}-%{version}.tar.bz2
-# Source0-md5:	be649223f0cf781aff2316e20eaac225
-Patch0:		%{name}-opt.patch
+Source0:	http://downloads.sourceforge.net/pupnp/libupnp-%{version}.tar.bz2
+# Source0-md5:	4d2c1e1efe0a19edeef233e14a93f04c
+Patch0:		libupnp-opt.patch
 URL:		http://pupnp.sourceforge.net/
 BuildRequires:	autoconf >= 2.60
 BuildRequires:	automake >= 1:1.8
-BuildRequires:	doxygen
 BuildRequires:	libtool >= 2:1.5
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -32,6 +31,7 @@ Summary:	Header files for libupnp
 Summary(pl.UTF-8):	Pliki nagłówkowe libupnp
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Conflicts:	libupnp-devel
 
 %description devel
 This package contains header files for the Linux SDK for UPnP Devices
@@ -46,6 +46,7 @@ Summary:	Static upnp libraries
 Summary(pl.UTF-8):	Statyczne biblioteki upnp
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
+Conflicts:	libupnp-static
 
 %description static
 Static upnp libraries.
@@ -68,7 +69,7 @@ API documentation for upnp libraries.
 Dokumentacja API bibliotek upnp.
 
 %prep
-%setup -q
+%setup -q -n libupnp-%{version}
 %patch0 -p1
 
 %build
@@ -78,10 +79,8 @@ Dokumentacja API bibliotek upnp.
 %{__autoheader}
 %{__automake}
 %configure \
-	--disable-silent-rules \
 	%{?debug:--enable-debug}
 %{__make}
-%{__make} -C docs docs
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -97,17 +96,21 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc COPYING ChangeLog THANKS
+%doc ChangeLog LICENSE NEWS README.md THANKS TODO
 %attr(755,root,root) %{_libdir}/libixml.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libixml.so.11
+%attr(755,root,root) %ghost %{_libdir}/libixml.so.2
+%attr(755,root,root) %{_libdir}/libthreadutil.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libthreadutil.so.6
 %attr(755,root,root) %{_libdir}/libupnp.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libupnp.so.17
+%attr(755,root,root) %ghost %{_libdir}/libupnp.so.6
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libixml.so
+%attr(755,root,root) %{_libdir}/libthreadutil.so
 %attr(755,root,root) %{_libdir}/libupnp.so
 %{_libdir}/libixml.la
+%{_libdir}/libthreadutil.la
 %{_libdir}/libupnp.la
 %{_includedir}/upnp
 %{_pkgconfigdir}/libupnp.pc
@@ -115,8 +118,9 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libixml.a
+%{_libdir}/libthreadutil.a
 %{_libdir}/libupnp.a
 
 %files apidocs
 %defattr(644,root,root,755)
-%doc docs/doxygen/html/
+%doc docs/dist/html/{ixml,upnp}
