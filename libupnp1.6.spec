@@ -68,7 +68,7 @@ Dokumentacja API bibliotek upnp.
 
 %prep
 %setup -q -n libupnp-%{version}
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 %{__libtoolize}
